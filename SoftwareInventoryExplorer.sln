@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareInventoryExplorer", "SoftwareInventoryExplorer\SoftwareInventoryExplorer.csproj", "{728358F3-7700-42A5-B732-CA84EA52B296}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SoftwareInventoryExplorerInstall", "SoftwareInventoryExplorerInstall\SoftwareInventoryExplorerInstall.vdproj", "{1EBC47F5-B8DF-43CE-BE85-C94EA9C3706B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,9 @@ Global
 		{728358F3-7700-42A5-B732-CA84EA52B296}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{728358F3-7700-42A5-B732-CA84EA52B296}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{728358F3-7700-42A5-B732-CA84EA52B296}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EBC47F5-B8DF-43CE-BE85-C94EA9C3706B}.Debug|Any CPU.ActiveCfg = Debug
+		{1EBC47F5-B8DF-43CE-BE85-C94EA9C3706B}.Release|Any CPU.ActiveCfg = Release
+		{1EBC47F5-B8DF-43CE-BE85-C94EA9C3706B}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
