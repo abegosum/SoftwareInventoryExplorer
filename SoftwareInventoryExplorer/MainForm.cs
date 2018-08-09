@@ -594,6 +594,11 @@ namespace SoftwareInventoryExplorer
                     dialogPrompt.ApprovedSoftwareLists = OpenProject.ApprovedSoftwareLists;
                     if (dialogPrompt.ShowDialog() == DialogResult.OK)
                     {
+                        if (!OpenProject.ApprovedSoftwareLists.Contains(dialogPrompt.SelectedList))
+                        {
+                            OpenProject.ApprovedSoftwareLists.Add(dialogPrompt.SelectedList);
+                            databindApprovedSoftwareLists();
+                        }
                         approveSelectedSoftware(dialogPrompt.SelectedList, dialogPrompt.ApprovalCode);
                         approvedListsBox.SelectedItem = dialogPrompt.SelectedList;
                         loadApprovedSoftwareTableFromList(dialogPrompt.SelectedList.ApprovedSoftwares);

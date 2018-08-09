@@ -18,11 +18,23 @@ namespace SoftwareInventoryExplorer
 
         public List<ApprovedSoftwareList> ApprovedSoftwareLists { get; set;}
 
+        private ApprovedSoftwareList _selectedList;
         public ApprovedSoftwareList SelectedList
         {
             get
             {
-                return (ApprovedSoftwareList)listsDropDown.SelectedItem;
+                if (_selectedList == null)
+                {
+                    if (listsDropDown.SelectedItem == null)
+                    {
+                        _selectedList = getOrCreateApprovedSoftwareListByName(listsDropDown.Text.Trim());
+                    }
+                    else
+                    {
+                        _selectedList = (ApprovedSoftwareList)listsDropDown.SelectedItem;
+                    }
+                }
+                return _selectedList;
             }
         }
 
@@ -39,6 +51,26 @@ namespace SoftwareInventoryExplorer
         public ApproveSoftwareEntriesPrompt()
         {
             InitializeComponent();
+        }
+
+        private ApprovedSoftwareList getOrCreateApprovedSoftwareListByName(String name)
+        {
+            ApprovedSoftwareList newList = null;
+            List<ApprovedSoftwareList> matchingLists =
+                (from list in ApprovedSoftwareLists
+                 where list.Name.Equals(name)
+                 select list).ToList();
+            if (matchingLists.Count == 1)
+            {
+                newList = matchingLists.First();
+            } else
+            {
+                newList = new ApprovedSoftwareList()
+                {
+                    Name = name
+                };
+            }
+            return newList;
         }
 
         private void setNumberOfEntriesLabel()
