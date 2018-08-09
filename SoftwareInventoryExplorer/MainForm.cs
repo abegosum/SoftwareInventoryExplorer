@@ -330,10 +330,10 @@ namespace SoftwareInventoryExplorer
         #endregion
 
         #region Prompts
-        private void promptForConnectionString()
+        private DialogResult promptForConnectionString()
         {
             ConnestionStringPrompt prompt = new ConnestionStringPrompt();
-            prompt.ShowDialog();
+            return prompt.ShowDialog();
         }
 
         private String promptForNewSoftwareList(bool showSoftwareListAfterCreation)
@@ -435,7 +435,10 @@ namespace SoftwareInventoryExplorer
             String connectionString = AppSettings.GetInstance().ConnectionString;
             if (connectionString == null || connectionString.Trim().Equals(String.Empty))
             {
-                promptForConnectionString();
+                if (promptForConnectionString() != DialogResult.OK)
+                {
+                    return;
+                }
             }
             displayTabPage("sccmViewTab");
             List<SoftwareInventoryTableEntry> entries = getDataFromSccm();

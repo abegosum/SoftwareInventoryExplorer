@@ -40,13 +40,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C3EA54548A9C4B7599C9BABAE1A7F1C6"
+        "OwnerKey" = "8:_06F38169446D53EC067DB61667E827DD"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_06F38169446D53EC067DB61667E827DD"
+        "OwnerKey" = "8:_C3EA54548A9C4B7599C9BABAE1A7F1C6"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -67,6 +67,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -83,6 +91,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -119,11 +135,6 @@
             "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_06F38169446D53EC067DB61667E827DD"
-                    {
-                    "Name" = "8:Newtonsoft.Json.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Newtonsoft.Json.dll"
             "TargetName" = "8:"
@@ -150,11 +161,6 @@
             "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
-                    "_C80007CEE134C670FE74F85115E13D2D"
-                    {
-                    "Name" = "8:System.Net.Http.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:System.Net.Http.dll"
             "TargetName" = "8:"
@@ -241,15 +247,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Software Inventory Explorer"
-        "ProductCode" = "8:{8DE37346-6C2C-4033-A945-A2A76174FA17}"
-        "PackageCode" = "8:{78794D3D-19C9-41FD-A97E-241FC192EE00}"
+        "ProductCode" = "8:{66872DFA-2C02-43E9-B583-79D37F81465F}"
+        "PackageCode" = "8:{F7E93D21-42DF-418E-B494-5F77FDB240C4}"
         "UpgradeCode" = "8:{B0F91252-044B-4EA5-A18A-9EBFC2622E55}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.0.2"
+        "ProductVersion" = "8:0.0.3"
         "Manufacturer" = "8:Aaron M. Bond"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -791,7 +797,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C3EA54548A9C4B7599C9BABAE1A7F1C6"
             {
-            "SourcePath" = "8:..\\SoftwareInventoryExplorer\\obj\\Release\\SoftwareInventoryExplorer.exe"
+            "SourcePath" = "8:..\\SoftwareInventoryExplorer\\obj\\Debug\\SoftwareInventoryExplorer.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_8AE887D339E14906AE42522CF4EF572B"

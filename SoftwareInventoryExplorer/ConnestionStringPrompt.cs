@@ -65,6 +65,7 @@ namespace SoftwareInventoryExplorer
                 AppSettings appSettings = AppSettings.GetInstance();
                 appSettings.ConnectionString = newConnectionString;
                 appSettings.Save();
+                DialogResult = DialogResult.OK;
                 MessageBox.Show("Connection string saved.", "Success");
                 Close();
             }
