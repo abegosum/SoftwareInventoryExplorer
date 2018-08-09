@@ -152,6 +152,12 @@
     <Compile Include="ReportForms\ReportDisplay.Designer.cs">
       <DependentUpon>ReportDisplay.cs</DependentUpon>
     </Compile>
+    <Compile Include="SaveBeforeClosePrompt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SaveBeforeClosePrompt.Designer.cs">
+      <DependentUpon>SaveBeforeClosePrompt.cs</DependentUpon>
+    </Compile>
     <Compile Include="Util\Extensions.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
@@ -191,6 +197,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ReportForms\ReportDisplay.resx">
       <DependentUpon>ReportDisplay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SaveBeforeClosePrompt.resx">
+      <DependentUpon>SaveBeforeClosePrompt.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

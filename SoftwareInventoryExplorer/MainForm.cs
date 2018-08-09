@@ -238,7 +238,7 @@ namespace SoftwareInventoryExplorer
 
         private List<SoftwareInventoryTableEntry> getDataFromSccm()
         {
-            
+
             SccmDataProvider dataProvider = new SccmDataProvider();
             List<SoftwareInventoryTableEntry> tableEntries = dataProvider.getSoftwareInventoryFromSccm();
             return tableEntries;
@@ -281,7 +281,7 @@ namespace SoftwareInventoryExplorer
             approvedListsBox.DataSource = null;
             approvedListsBox.DisplayMember = "Name";
             approvedListsBox.DataSource = OpenProject.ApprovedSoftwareLists;
-            
+
         }
 
 
@@ -439,9 +439,9 @@ namespace SoftwareInventoryExplorer
             List<string> allApprovedSoftwareCodes = new List<string>();
             foreach (ApprovedSoftwareList list in OpenProject.ApprovedSoftwareLists)
             {
-                List<string> currentListSoftwareCodes = 
+                List<string> currentListSoftwareCodes =
                     (from entry in list.ApprovedSoftwares
-                    select entry.SoftwareExample.SoftwareCode
+                     select entry.SoftwareExample.SoftwareCode
                     ).ToList();
                 allApprovedSoftwareCodes = allApprovedSoftwareCodes.Concat(currentListSoftwareCodes).ToList();
             }
@@ -461,11 +461,12 @@ namespace SoftwareInventoryExplorer
         private void Form1_Load(object sender, EventArgs e)
         {
             gatherTabPagesAndHide();
+            _edited = false;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            Close();
         }
 
         private void setSCCMConnectionStringToolStripMenuItem_Click(object sender, EventArgs e)
@@ -515,7 +516,7 @@ namespace SoftwareInventoryExplorer
             }
         }
 
-        private void addApprovedButton_Click(object sender, EventArgs e)
+        private void promptToAddSelectedSccmEntriesToList()
         {
             if (sccmDataTable.SelectedRows.Count > 0)
             {
@@ -532,11 +533,51 @@ namespace SoftwareInventoryExplorer
                         displayTabPage("approvedSoftwareLists");
                     }
                 }
-            } else
+            }
+            else
             {
                 MessageBox.Show("No entries selected.");
             }
-            
+        }
+
+        private void runSelectedReport()
+        {
+            ReportDisplay displayForm = new ReportDisplay(getSelectedSoftwareReport(), OpenProject);
+            displayForm.ShowDialog();
+        }
+
+        private void deleteSelectedReport()
+        {
+            SoftwareReport report = getSelectedSoftwareReport();
+            if (report != null)
+            {
+                if (MessageBox.Show("Are you certain you wish to delete the selected report?", "Delete Report", MessageBoxButtons.OKCancel)
+                    == DialogResult.OK)
+                {
+                    deleteReportAndReloadDataView(report);
+                }
+            }
+        }
+
+        private void deleteSelectedApprovedEntries()
+        {
+            if (MessageBox.Show("Are you certain you want to delete the selected software from the list?", "Delete Approved Software", MessageBoxButtons.OKCancel) ==
+    DialogResult.OK)
+            {
+                ApprovedSoftwareList selectedApprovedSoftwareList = getSelectedApprovedSoftwareList();
+                foreach (ApprovedSoftware entry in getSelectedApprovalEntries())
+                {
+                    // Accessing the list directly is faster than the native .removeSoftware method,
+                    // which looks for value equivalence vs actual identity.
+                    selectedApprovedSoftwareList.ApprovedSoftwares.Remove(entry);
+                }
+                loadApprovedSoftwareTableFromList(selectedApprovedSoftwareList.ApprovedSoftwares);
+            }
+        }
+
+        private void addApprovedButton_Click(object sender, EventArgs e)
+        {
+            promptToAddSelectedSccmEntriesToList();
         }
 
         private void approvedListsBox_SelectedValueChanged(object sender, EventArgs e)
@@ -597,8 +638,7 @@ namespace SoftwareInventoryExplorer
 
         private void runReportButton_Click(object sender, EventArgs e)
         {
-            ReportDisplay displayForm = new ReportDisplay(getSelectedSoftwareReport(), OpenProject);
-            displayForm.ShowDialog();
+            runSelectedReport();
         }
 
         private void approvedSoftwareDataGrid_SelectionChanged(object sender, EventArgs e)
@@ -609,18 +649,7 @@ namespace SoftwareInventoryExplorer
 
         private void deleteFromApprovedListButton_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you certain you want to delete the selected software from the list?", "Delete Approved Software", MessageBoxButtons.OKCancel) ==
-                DialogResult.OK)
-            {
-                ApprovedSoftwareList selectedApprovedSoftwareList = getSelectedApprovedSoftwareList();
-                foreach (ApprovedSoftware entry in getSelectedApprovalEntries())
-                {
-                    // Accessing the list directly is faster than the native .removeSoftware method,
-                    // which looks for value equivalence vs actual identity.
-                    selectedApprovedSoftwareList.ApprovedSoftwares.Remove(entry);
-                }
-                loadApprovedSoftwareTableFromList(selectedApprovedSoftwareList.ApprovedSoftwares);
-            }
+            deleteSelectedApprovedEntries();
         }
 
         private void sccmDataTable_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -633,21 +662,65 @@ namespace SoftwareInventoryExplorer
 
         private void deleteReportButton_Click(object sender, EventArgs e)
         {
-            SoftwareReport report = getSelectedSoftwareReport();
-            if (report != null)
-            {
-                if (MessageBox.Show("Are you certain you wish to delete the selected report?", "Delete Report", MessageBoxButtons.OKCancel)
-                    == DialogResult.OK)
-                {
-                    deleteReportAndReloadDataView(report);
-                }
-            }
+            deleteSelectedReport();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             About aboutForm = new About();
             aboutForm.ShowDialog();
+        }
+
+        private void addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            promptToAddSelectedSccmEntriesToList();
+        }
+
+        private void reportsDataGridView_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                DataGridView.HitTestInfo hitTest = reportsDataGridView.HitTest(e.X, e.Y);
+                reportsDataGridView.ClearSelection();
+                reportsDataGridView.Rows[hitTest.RowIndex].Selected = true;
+            }
+        }
+
+        private void runReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            runSelectedReport();
+        }
+
+        private void editReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            promptToEditReport(getSelectedSoftwareReport());
+        }
+
+        private void deleteReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            deleteSelectedReport();
+        }
+
+        private void deleteSelectedFromListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            deleteSelectedApprovedEntries();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_edited)
+            {
+                SaveBeforeClosePrompt prompt = new SaveBeforeClosePrompt();
+                DialogResult result = prompt.ShowDialog();
+                if (result == DialogResult.Yes)
+                {
+                    saveProject();
+                }
+                if (result == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 }

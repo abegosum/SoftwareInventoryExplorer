@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInventoryProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,6 +49,8 @@
             this.sccmViewTab = new System.Windows.Forms.TabPage();
             this.addApprovedButton = new System.Windows.Forms.Button();
             this.sccmDataTable = new System.Windows.Forms.DataGridView();
+            this.sccmGridRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.approvedSoftwareLists = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.approvedListsBox = new System.Windows.Forms.ListBox();
@@ -59,12 +62,19 @@
             this.deleteReportButton = new System.Windows.Forms.Button();
             this.runReportButton = new System.Windows.Forms.Button();
             this.reportsDataGridView = new System.Windows.Forms.DataGridView();
+            this.reportRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.runReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveProjectFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.approvedSoftwareRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.deleteSelectedFromListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.programTabControl.SuspendLayout();
             this.sccmViewTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sccmDataTable)).BeginInit();
+            this.sccmGridRightClickMenu.SuspendLayout();
             this.approvedSoftwareLists.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -73,6 +83,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.approvedSoftwareDataGrid)).BeginInit();
             this.reports.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.reportsDataGridView)).BeginInit();
+            this.reportRightClickMenu.SuspendLayout();
+            this.approvedSoftwareRightClickMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -192,7 +204,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -244,15 +256,16 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.sccmDataTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.sccmDataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.sccmDataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.sccmDataTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.sccmDataTable.ContextMenuStrip = this.sccmGridRightClickMenu;
             this.sccmDataTable.Location = new System.Drawing.Point(3, 6);
             this.sccmDataTable.Name = "sccmDataTable";
             this.sccmDataTable.ReadOnly = true;
@@ -260,6 +273,21 @@
             this.sccmDataTable.Size = new System.Drawing.Size(759, 302);
             this.sccmDataTable.TabIndex = 0;
             this.sccmDataTable.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.sccmDataTable_CellDoubleClick);
+            // 
+            // sccmGridRightClickMenu
+            // 
+            this.sccmGridRightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem});
+            this.sccmGridRightClickMenu.Name = "sccmGridRightClickMenu";
+            this.sccmGridRightClickMenu.ShowImageMargin = false;
+            this.sccmGridRightClickMenu.Size = new System.Drawing.Size(307, 26);
+            // 
+            // addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem
+            // 
+            this.addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem.Name = "addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem";
+            this.addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem.Size = new System.Drawing.Size(306, 22);
+            this.addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem.Text = "Add Selected Software to Approved Software List";
+            this.addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem.Click += new System.EventHandler(this.addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem_Click);
             // 
             // approvedSoftwareLists
             // 
@@ -322,6 +350,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.approvedSoftwareDataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.approvedSoftwareDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.approvedSoftwareDataGrid.ContextMenuStrip = this.approvedSoftwareRightClickMenu;
             this.approvedSoftwareDataGrid.Location = new System.Drawing.Point(3, 3);
             this.approvedSoftwareDataGrid.Name = "approvedSoftwareDataGrid";
             this.approvedSoftwareDataGrid.ReadOnly = true;
@@ -401,6 +430,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.reportsDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.reportsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.reportsDataGridView.ContextMenuStrip = this.reportRightClickMenu;
             this.reportsDataGridView.Location = new System.Drawing.Point(6, 26);
             this.reportsDataGridView.MultiSelect = false;
             this.reportsDataGridView.Name = "reportsDataGridView";
@@ -409,6 +439,38 @@
             this.reportsDataGridView.Size = new System.Drawing.Size(756, 282);
             this.reportsDataGridView.TabIndex = 0;
             this.reportsDataGridView.SelectionChanged += new System.EventHandler(this.reportsDataGridView_SelectionChanged);
+            this.reportsDataGridView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.reportsDataGridView_MouseDown);
+            // 
+            // reportRightClickMenu
+            // 
+            this.reportRightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.runReportToolStripMenuItem,
+            this.editReportToolStripMenuItem,
+            this.deleteReportToolStripMenuItem});
+            this.reportRightClickMenu.Name = "reportRightClickMenu";
+            this.reportRightClickMenu.ShowImageMargin = false;
+            this.reportRightClickMenu.Size = new System.Drawing.Size(121, 70);
+            // 
+            // runReportToolStripMenuItem
+            // 
+            this.runReportToolStripMenuItem.Name = "runReportToolStripMenuItem";
+            this.runReportToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.runReportToolStripMenuItem.Text = "Run Report";
+            this.runReportToolStripMenuItem.Click += new System.EventHandler(this.runReportToolStripMenuItem_Click);
+            // 
+            // editReportToolStripMenuItem
+            // 
+            this.editReportToolStripMenuItem.Name = "editReportToolStripMenuItem";
+            this.editReportToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.editReportToolStripMenuItem.Text = "Edit Report";
+            this.editReportToolStripMenuItem.Click += new System.EventHandler(this.editReportToolStripMenuItem_Click);
+            // 
+            // deleteReportToolStripMenuItem
+            // 
+            this.deleteReportToolStripMenuItem.Name = "deleteReportToolStripMenuItem";
+            this.deleteReportToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.deleteReportToolStripMenuItem.Text = "Delete Report";
+            this.deleteReportToolStripMenuItem.Click += new System.EventHandler(this.deleteReportToolStripMenuItem_Click);
             // 
             // openProjectFileDialog
             // 
@@ -421,6 +483,21 @@
             this.saveProjectFileDialog.FileName = "NewProject.sieproj";
             this.saveProjectFileDialog.Filter = "Software Inventory Explorer Files|*.sieproj|All files|*.*";
             // 
+            // approvedSoftwareRightClickMenu
+            // 
+            this.approvedSoftwareRightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteSelectedFromListToolStripMenuItem});
+            this.approvedSoftwareRightClickMenu.Name = "approvedSoftwareRightClickMenu";
+            this.approvedSoftwareRightClickMenu.ShowImageMargin = false;
+            this.approvedSoftwareRightClickMenu.Size = new System.Drawing.Size(180, 26);
+            // 
+            // deleteSelectedFromListToolStripMenuItem
+            // 
+            this.deleteSelectedFromListToolStripMenuItem.Name = "deleteSelectedFromListToolStripMenuItem";
+            this.deleteSelectedFromListToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.deleteSelectedFromListToolStripMenuItem.Text = "Delete Selected from List";
+            this.deleteSelectedFromListToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedFromListToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -431,12 +508,14 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Software Inventory Explorer";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.programTabControl.ResumeLayout(false);
             this.sccmViewTab.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.sccmDataTable)).EndInit();
+            this.sccmGridRightClickMenu.ResumeLayout(false);
             this.approvedSoftwareLists.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -445,6 +524,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.approvedSoftwareDataGrid)).EndInit();
             this.reports.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.reportsDataGridView)).EndInit();
+            this.reportRightClickMenu.ResumeLayout(false);
+            this.approvedSoftwareRightClickMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -484,6 +565,14 @@
         private System.Windows.Forms.Button deleteReportButton;
         private System.Windows.Forms.Button runReportButton;
         private System.Windows.Forms.DataGridView reportsDataGridView;
+        private System.Windows.Forms.ContextMenuStrip sccmGridRightClickMenu;
+        private System.Windows.Forms.ToolStripMenuItem addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip reportRightClickMenu;
+        private System.Windows.Forms.ToolStripMenuItem runReportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editReportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteReportToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip approvedSoftwareRightClickMenu;
+        private System.Windows.Forms.ToolStripMenuItem deleteSelectedFromListToolStripMenuItem;
     }
 }
 
