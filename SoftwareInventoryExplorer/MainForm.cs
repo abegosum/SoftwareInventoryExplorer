@@ -19,6 +19,7 @@ namespace SoftwareInventoryExplorer
     public partial class MainForm : Form
     {
 
+        #region Properties and private members
         private String _projectPath;
 
         private bool _edited = false;
@@ -49,30 +50,14 @@ namespace SoftwareInventoryExplorer
                 return _tabPages;
             }
         }
+        #endregion
 
         public MainForm()
         {
             InitializeComponent();
         }
 
-        private void setPageTitleWithProject()
-        {
-            StringBuilder titleBuilder = new StringBuilder("Software Inventory Explorer - ");
-            if (_projectPath.IsNullOrEmpty())
-            {
-                titleBuilder.Append("Unnamed Project");
-            } else
-            {
-                String filename = Path.GetFileName(_projectPath);
-                titleBuilder.Append(filename);
-            }
-            if (_edited)
-            {
-                titleBuilder.Append("*");
-            }
-            Text = titleBuilder.ToString();
-        }
-
+        #region Data Table Creation and Population
         private DataTable createSoftwareTable()
         {
             DataTable table = new DataTable();
@@ -131,11 +116,6 @@ namespace SoftwareInventoryExplorer
             reportsDataGridView.CurrentCell = null;
         }
 
-        private bool isSoftwareCodeInApprovedList(String softwareCode)
-        {
-            return false;
-        }
-
         private void loadSccmDataFromTableEntryList(List<SoftwareInventoryTableEntry> tableEntries)
         {
             DataTable table = createSccmSoftwareTable();
@@ -157,7 +137,8 @@ namespace SoftwareInventoryExplorer
                 if (tableEntries[i].IsHighlighted)
                 {
                     highlightSccmRow(sccmDataTable.Rows[i]);
-                } else
+                }
+                else
                 {
                     unhighlightSccmRow(sccmDataTable.Rows[i]);
                 }
@@ -201,6 +182,100 @@ namespace SoftwareInventoryExplorer
             approvedSoftwareDataGrid.CurrentCell = null;
         }
 
+        private void highlightSccmRow(DataGridViewRow row)
+        {
+            row.DefaultCellStyle.BackColor = Color.LightGreen;
+        }
+
+        private void unhighlightSccmRow(DataGridViewRow row)
+        {
+            row.DefaultCellStyle.BackColor = Color.White;
+        }
+
+        private List<SoftwareInventoryTableEntry> getDataFromSccm()
+        {
+
+            SccmDataProvider dataProvider = new SccmDataProvider();
+            List<SoftwareInventoryTableEntry> tableEntries = dataProvider.getSoftwareInventoryFromSccm();
+            return tableEntries;
+        }
+
+        private void databindApprovedSoftwareLists()
+        {
+            approvedListsBox.DataSource = null;
+            approvedListsBox.DisplayMember = "Name";
+            approvedListsBox.DataSource = OpenProject.ApprovedSoftwareLists;
+
+        }
+
+        private void approveSelectedSoftware(ApprovedSoftwareList list, ApprovedSoftware.ApprovedByCodes approvedBy)
+        {
+            foreach (DataGridViewRow row in sccmDataTable.SelectedRows)
+            {
+                _edited = true;
+                int currentIndex = row.Index;
+                list.addSoftware(approvedBy, OpenProject.SccmTableEntries[currentIndex].Software);
+                OpenProject.SccmTableEntries[currentIndex].IsHighlighted = true;
+                highlightSccmRow(row);
+            }
+        }
+
+        private bool softwareIdShouldBeHighlighted(Software softwareExample)
+        {
+            bool result = false;
+            foreach (ApprovedSoftwareList list in OpenProject.ApprovedSoftwareLists)
+            {
+                result = list.softwareIsInList(softwareExample);
+                result = true;
+            }
+            return result;
+        }
+
+        private void highlightSoftwareEntries(List<SoftwareInventoryTableEntry> entries)
+        {
+            //get all approved software codes from all lists
+            List<string> allApprovedSoftwareCodes = new List<string>();
+            foreach (ApprovedSoftwareList list in OpenProject.ApprovedSoftwareLists)
+            {
+                List<string> currentListSoftwareCodes =
+                    (from entry in list.ApprovedSoftwares
+                     select entry.SoftwareExample.SoftwareCode
+                    ).ToList();
+                allApprovedSoftwareCodes = allApprovedSoftwareCodes.Concat(currentListSoftwareCodes).ToList();
+            }
+            allApprovedSoftwareCodes = allApprovedSoftwareCodes.Distinct().ToList();
+            //filter table entries to only relevant entries
+            List<SoftwareInventoryTableEntry> relevantEntries =
+                (from entry in entries
+                 where allApprovedSoftwareCodes.Contains(entry.Software.SoftwareCode)
+                 select entry).ToList();
+            //for each list, highlight the relevant entries and remove them from the set to be checked
+            foreach (ApprovedSoftwareList list in OpenProject.ApprovedSoftwareLists)
+            {
+                relevantEntries = relevantEntries.Except(hightlightSoftwareEntiresForList(relevantEntries, list)).ToList();
+            }
+        }
+        #endregion
+
+        #region UI Setup
+        private void setPageTitleWithProject()
+        {
+            StringBuilder titleBuilder = new StringBuilder("Software Inventory Explorer - ");
+            if (_projectPath.IsNullOrEmpty())
+            {
+                titleBuilder.Append("Unnamed Project");
+            } else
+            {
+                String filename = Path.GetFileName(_projectPath);
+                titleBuilder.Append(filename);
+            }
+            if (_edited)
+            {
+                titleBuilder.Append("*");
+            }
+            Text = titleBuilder.ToString();
+        }
+
         private void setupUiFromProject()
         {
             if (OpenProject.SccmTableEntries != null && OpenProject.SccmTableEntries.Count > 0)
@@ -226,30 +301,6 @@ namespace SoftwareInventoryExplorer
             }
         }
 
-        private void highlightSccmRow(DataGridViewRow row)
-        {
-            row.DefaultCellStyle.BackColor = Color.LightGreen;
-        }
-
-        private void unhighlightSccmRow(DataGridViewRow row)
-        {
-            row.DefaultCellStyle.BackColor = Color.White;
-        }
-
-        private List<SoftwareInventoryTableEntry> getDataFromSccm()
-        {
-
-            SccmDataProvider dataProvider = new SccmDataProvider();
-            List<SoftwareInventoryTableEntry> tableEntries = dataProvider.getSoftwareInventoryFromSccm();
-            return tableEntries;
-        }
-
-        private void promptForConnectionString()
-        {
-            ConnestionStringPrompt prompt = new ConnestionStringPrompt();
-            prompt.ShowDialog();
-        }
-
         private void gatherTabPagesAndHide()
         {
             foreach (TabPage page in programTabControl.TabPages)
@@ -258,6 +309,7 @@ namespace SoftwareInventoryExplorer
                 programTabControl.TabPages.Remove(page);
             }
             programTabControl.Visible = false;
+            _edited = false;
             OpenProject.OpenTabKey = null;
         }
 
@@ -275,28 +327,47 @@ namespace SoftwareInventoryExplorer
             }
             if (updateSelectedTab) programTabControl.SelectedTab = TabPages[tabName];
         }
+        #endregion
 
-        private void databindApprovedSoftwareLists()
+        #region Prompts
+        private void promptForConnectionString()
         {
-            approvedListsBox.DataSource = null;
-            approvedListsBox.DisplayMember = "Name";
-            approvedListsBox.DataSource = OpenProject.ApprovedSoftwareLists;
-
+            ConnestionStringPrompt prompt = new ConnestionStringPrompt();
+            prompt.ShowDialog();
         }
 
-
-        private void approveSelectedSoftware(ApprovedSoftwareList list, ApprovedSoftware.ApprovedByCodes approvedBy)
+        private String promptForNewSoftwareList(bool showSoftwareListAfterCreation)
         {
-            foreach (DataGridViewRow row in sccmDataTable.SelectedRows)
+            ApprovedSoftwareListNamePrompt namePrompt = new ApprovedSoftwareListNamePrompt();
+            namePrompt.ShowDialog();
+            String listName = null;
+            if (namePrompt.DialogResult == DialogResult.OK)
             {
+                listName = namePrompt.ApprovedSoftwareListName;
                 _edited = true;
-                int currentIndex = row.Index;
-                list.addSoftware(approvedBy, OpenProject.SccmTableEntries[currentIndex].Software);
-                OpenProject.SccmTableEntries[currentIndex].IsHighlighted = true;
-                highlightSccmRow(row);
+                OpenProject.ApprovedSoftwareLists.Add(new ApprovedSoftwareList(listName));
+                databindApprovedSoftwareLists();
+                if (showSoftwareListAfterCreation) displayTabPage("approvedSoftwareLists");
             }
+            return listName;
         }
 
+        private bool promptForNewSoftwareListIfNoneAvailable(bool showSoftwareListAfterCreation)
+        {
+            String resultName = null;
+            if (OpenProject.ApprovedSoftwareLists.Count == 0)
+            {
+                resultName = promptForNewSoftwareList(showSoftwareListAfterCreation);
+            }
+            else
+            {
+                resultName = OpenProject.ApprovedSoftwareLists.First<ApprovedSoftwareList>().Name;
+            }
+            return resultName != null;
+        }
+        #endregion
+
+        #region Project Saving and Opening
         private void openProject()
         {
             if (openProjectFileDialog.ShowDialog() == DialogResult.OK)
@@ -341,129 +412,14 @@ namespace SoftwareInventoryExplorer
             _projectPath = filePath;
             setPageTitleWithProject();
         }
-
-        private bool softwareIdShouldBeHighlighted(Software softwareExample)
-        {
-            bool result = false;
-            foreach (ApprovedSoftwareList list in OpenProject.ApprovedSoftwareLists)
-            {
-                result = list.softwareIsInList(softwareExample);
-                result = true;
-            }
-            return result;
-        }
-
-        private String promptForNewSoftwareList(bool showSoftwareListAfterCreation)
-        {
-            ApprovedSoftwareListNamePrompt namePrompt = new ApprovedSoftwareListNamePrompt();
-            namePrompt.ShowDialog();
-            String listName = null;
-            if (namePrompt.DialogResult == DialogResult.OK)
-            {
-                listName = namePrompt.ApprovedSoftwareListName;
-                _edited = true;
-                OpenProject.ApprovedSoftwareLists.Add(new ApprovedSoftwareList(listName));
-                databindApprovedSoftwareLists();
-                if (showSoftwareListAfterCreation) displayTabPage("approvedSoftwareLists");
-            }
-            return listName;
-        }
-
-        private bool promptForNewSoftwareListIfNoneAvailable(bool showSoftwareListAfterCreation)
-        {
-            String resultName = null;
-            if (OpenProject.ApprovedSoftwareLists.Count == 0)
-            {
-                resultName = promptForNewSoftwareList(showSoftwareListAfterCreation);
-            } else
-            {
-                resultName = OpenProject.ApprovedSoftwareLists.First<ApprovedSoftwareList>().Name;
-            }
-            return resultName != null;
-        }
-
-        private SoftwareReport getSelectedSoftwareReport()
-        {
-            int selectedRowIndex = reportsDataGridView.SelectedRows[0].Index;
-            SoftwareReport selectedReport = OpenProject.Reports[selectedRowIndex];
-            return selectedReport;
-        }
-
-        private ApprovedSoftwareList getSelectedApprovedSoftwareList()
-        {
-            ApprovedSoftwareList result = null;
-            result = (ApprovedSoftwareList)approvedListsBox.SelectedItem;
-            return result;
-        }
-
-        private List<ApprovedSoftware> getSelectedApprovalEntries()
-        {
-            List<ApprovedSoftware> result = new List<ApprovedSoftware>();
-            ApprovedSoftwareList selectedApprovedSoftwareList = getSelectedApprovedSoftwareList();
-            foreach (DataGridViewBand row in approvedSoftwareDataGrid.SelectedRows)
-            {
-                int index = row.Index;
-                result.Add(selectedApprovedSoftwareList.ApprovedSoftwares[index]);
-            }
-            return result;
-        }
-
-        private void deleteReportAndReloadDataView(SoftwareReport report)
-        {
-            OpenProject.Reports.Remove(report);
-            _edited = true;
-            loadReportDataFromList(OpenProject.Reports);
-        }
-
-        private List<SoftwareInventoryTableEntry> hightlightSoftwareEntiresForList(List<SoftwareInventoryTableEntry> entries, ApprovedSoftwareList list)
-        {
-            List<SoftwareInventoryTableEntry> highlightedEntries = new List<SoftwareInventoryTableEntry>();
-            foreach (ApprovedSoftware approval in list.ApprovedSoftwares)
-            {
-                List<SoftwareInventoryTableEntry> matchingEntries =
-                    (from entry in entries
-                     where approval.softwareMatches(entry.Software)
-                     select entry).ToList();
-                foreach (SoftwareInventoryTableEntry entry in matchingEntries)
-                {
-                    entry.IsHighlighted = true;
-                    highlightedEntries.Add(entry);
-                }
-            }
-            return highlightedEntries;
-        }
-
-        private void highlightSoftwareEntries(List<SoftwareInventoryTableEntry> entries)
-        {
-            //get all approved software codes from all lists
-            List<string> allApprovedSoftwareCodes = new List<string>();
-            foreach (ApprovedSoftwareList list in OpenProject.ApprovedSoftwareLists)
-            {
-                List<string> currentListSoftwareCodes =
-                    (from entry in list.ApprovedSoftwares
-                     select entry.SoftwareExample.SoftwareCode
-                    ).ToList();
-                allApprovedSoftwareCodes = allApprovedSoftwareCodes.Concat(currentListSoftwareCodes).ToList();
-            }
-            allApprovedSoftwareCodes = allApprovedSoftwareCodes.Distinct().ToList();
-            //filter table entries to only relevant entries
-            List<SoftwareInventoryTableEntry> relevantEntries =
-                (from entry in entries
-                 where allApprovedSoftwareCodes.Contains(entry.Software.SoftwareCode)
-                 select entry).ToList();
-            //for each list, highlight the relevant entries and remove them from the set to be checked
-            foreach (ApprovedSoftwareList list in OpenProject.ApprovedSoftwareLists)
-            {
-                relevantEntries = relevantEntries.Except(hightlightSoftwareEntiresForList(relevantEntries, list)).ToList();
-            }
-        }
+        #endregion
 
         private void Form1_Load(object sender, EventArgs e)
         {
             gatherTabPagesAndHide();
-            _edited = false;
         }
 
+        #region Menu Event Handlers
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
@@ -494,6 +450,68 @@ namespace SoftwareInventoryExplorer
             promptForNewSoftwareList(true);
         }
 
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveProject();
+        }
+
+        private void openInventoryProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openProject();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveProjectAs();
+        }
+
+        private void reportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            promptToCreateReport();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            About aboutForm = new About();
+            aboutForm.ShowDialog();
+        }
+        #endregion
+
+        #region Context Menu Event Handlers
+        private void addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            promptToAddSelectedSccmEntriesToList();
+        }
+
+        private void runReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            runSelectedReport();
+        }
+
+        private void editReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            promptToEditReport(getSelectedSoftwareReport());
+        }
+
+        private void deleteReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            deleteSelectedReport();
+        }
+
+        private void deleteSelectedFromListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            deleteSelectedApprovedEntries();
+        }
+        #endregion
+
+        #region Report Helpers
+        private void deleteReportAndReloadDataView(SoftwareReport report)
+        {
+            OpenProject.Reports.Remove(report);
+            _edited = true;
+            loadReportDataFromList(OpenProject.Reports);
+        }
+
         private void promptToCreateReport()
         {
             ReportBuilder form = new ReportBuilder(OpenProject);
@@ -514,6 +532,52 @@ namespace SoftwareInventoryExplorer
                 loadReportDataFromList(OpenProject.Reports);
                 displayTabPage("reports");
             }
+        }
+
+        private void runSelectedReport()
+        {
+            ReportDisplay displayForm = new ReportDisplay(getSelectedSoftwareReport(), OpenProject);
+            displayForm.ShowDialog();
+        }
+
+        private void deleteSelectedReport()
+        {
+            SoftwareReport report = getSelectedSoftwareReport();
+            if (report != null)
+            {
+                if (MessageBox.Show("Are you certain you wish to delete the selected report?", "Delete Report", MessageBoxButtons.OKCancel)
+                    == DialogResult.OK)
+                {
+                    deleteReportAndReloadDataView(report);
+                }
+            }
+        }
+
+        private SoftwareReport getSelectedSoftwareReport()
+        {
+            int selectedRowIndex = reportsDataGridView.SelectedRows[0].Index;
+            SoftwareReport selectedReport = OpenProject.Reports[selectedRowIndex];
+            return selectedReport;
+        }
+        #endregion
+
+        #region SCCM Data Helpers
+        private List<SoftwareInventoryTableEntry> hightlightSoftwareEntiresForList(List<SoftwareInventoryTableEntry> entries, ApprovedSoftwareList list)
+        {
+            List<SoftwareInventoryTableEntry> highlightedEntries = new List<SoftwareInventoryTableEntry>();
+            foreach (ApprovedSoftware approval in list.ApprovedSoftwares)
+            {
+                List<SoftwareInventoryTableEntry> matchingEntries =
+                    (from entry in entries
+                     where approval.softwareMatches(entry.Software)
+                     select entry).ToList();
+                foreach (SoftwareInventoryTableEntry entry in matchingEntries)
+                {
+                    entry.IsHighlighted = true;
+                    highlightedEntries.Add(entry);
+                }
+            }
+            return highlightedEntries;
         }
 
         private void promptToAddSelectedSccmEntriesToList()
@@ -539,24 +603,26 @@ namespace SoftwareInventoryExplorer
                 MessageBox.Show("No entries selected.");
             }
         }
+        #endregion
 
-        private void runSelectedReport()
+        #region Approval List Helpers
+        private List<ApprovedSoftware> getSelectedApprovalEntries()
         {
-            ReportDisplay displayForm = new ReportDisplay(getSelectedSoftwareReport(), OpenProject);
-            displayForm.ShowDialog();
+            List<ApprovedSoftware> result = new List<ApprovedSoftware>();
+            ApprovedSoftwareList selectedApprovedSoftwareList = getSelectedApprovedSoftwareList();
+            foreach (DataGridViewBand row in approvedSoftwareDataGrid.SelectedRows)
+            {
+                int index = row.Index;
+                result.Add(selectedApprovedSoftwareList.ApprovedSoftwares[index]);
+            }
+            return result;
         }
 
-        private void deleteSelectedReport()
+        private ApprovedSoftwareList getSelectedApprovedSoftwareList()
         {
-            SoftwareReport report = getSelectedSoftwareReport();
-            if (report != null)
-            {
-                if (MessageBox.Show("Are you certain you wish to delete the selected report?", "Delete Report", MessageBoxButtons.OKCancel)
-                    == DialogResult.OK)
-                {
-                    deleteReportAndReloadDataView(report);
-                }
-            }
+            ApprovedSoftwareList result = null;
+            result = (ApprovedSoftwareList)approvedListsBox.SelectedItem;
+            return result;
         }
 
         private void deleteSelectedApprovedEntries()
@@ -574,12 +640,24 @@ namespace SoftwareInventoryExplorer
                 loadApprovedSoftwareTableFromList(selectedApprovedSoftwareList.ApprovedSoftwares);
             }
         }
+        #endregion
 
+        #region SCCM Data Tab Events
         private void addApprovedButton_Click(object sender, EventArgs e)
         {
             promptToAddSelectedSccmEntriesToList();
         }
 
+        private void sccmDataTable_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int index = e.RowIndex;
+            Software softwareExample = OpenProject.SccmTableEntries[index].Software;
+            InstalledMachinesList machinesList = new InstalledMachinesList(softwareExample);
+            machinesList.ShowDialog();
+        }
+        #endregion
+
+        #region Approval List Tab Events
         private void approvedListsBox_SelectedValueChanged(object sender, EventArgs e)
         {
             ApprovedSoftwareList approvedSoftwareList = (ApprovedSoftwareList)approvedListsBox.SelectedItem;
@@ -589,16 +667,20 @@ namespace SoftwareInventoryExplorer
             }
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        private void approvedSoftwareDataGrid_SelectionChanged(object sender, EventArgs e)
         {
-            saveProject();
+            bool somethingSelected = approvedSoftwareDataGrid.SelectedRows.Count > 0;
+            deleteFromApprovedListButton.Enabled = somethingSelected;
         }
 
-        private void openInventoryProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        private void deleteFromApprovedListButton_Click(object sender, EventArgs e)
         {
-            openProject();
+            deleteSelectedApprovedEntries();
         }
 
+        #endregion
+
+        #region Main Form Event Handlers
         private void programTabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             _edited = true;
@@ -607,17 +689,9 @@ namespace SoftwareInventoryExplorer
                 OpenProject.OpenTabKey = programTabControl.SelectedTab.Name;
             } 
         }
+        #endregion
 
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            saveProjectAs();
-        }
-
-        private void reportToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            promptToCreateReport();
-        }
-
+        #region Reports Tab Events
         private void reportsDataGridView_SelectionChanged(object sender, EventArgs e)
         {
             bool anySelected = reportsDataGridView.SelectedRows.Count > 0;
@@ -641,39 +715,9 @@ namespace SoftwareInventoryExplorer
             runSelectedReport();
         }
 
-        private void approvedSoftwareDataGrid_SelectionChanged(object sender, EventArgs e)
-        {
-            bool somethingSelected = approvedSoftwareDataGrid.SelectedRows.Count > 0;
-            deleteFromApprovedListButton.Enabled = somethingSelected;
-        }
-
-        private void deleteFromApprovedListButton_Click(object sender, EventArgs e)
-        {
-            deleteSelectedApprovedEntries();
-        }
-
-        private void sccmDataTable_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            int index = e.RowIndex;
-            Software softwareExample = OpenProject.SccmTableEntries[index].Software;
-            InstalledMachinesList machinesList = new InstalledMachinesList(softwareExample);
-            machinesList.ShowDialog();
-        }
-
         private void deleteReportButton_Click(object sender, EventArgs e)
         {
             deleteSelectedReport();
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            About aboutForm = new About();
-            aboutForm.ShowDialog();
-        }
-
-        private void addSelectedSoftwareToApprovedSoftwareListToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            promptToAddSelectedSccmEntriesToList();
         }
 
         private void reportsDataGridView_MouseDown(object sender, MouseEventArgs e)
@@ -685,26 +729,7 @@ namespace SoftwareInventoryExplorer
                 reportsDataGridView.Rows[hitTest.RowIndex].Selected = true;
             }
         }
-
-        private void runReportToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            runSelectedReport();
-        }
-
-        private void editReportToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            promptToEditReport(getSelectedSoftwareReport());
-        }
-
-        private void deleteReportToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            deleteSelectedReport();
-        }
-
-        private void deleteSelectedFromListToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            deleteSelectedApprovedEntries();
-        }
+        #endregion
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
