@@ -94,6 +94,12 @@
     <Compile Include="ApproveSoftwareEntriesPrompt.Designer.cs">
       <DependentUpon>ApproveSoftwareEntriesPrompt.cs</DependentUpon>
     </Compile>
+    <Compile Include="BackgroundAndForegroundColorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BackgroundAndForegroundColorDialog.Designer.cs">
+      <DependentUpon>BackgroundAndForegroundColorDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConnestionStringPrompt.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -167,6 +173,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ApproveSoftwareEntriesPrompt.resx">
       <DependentUpon>ApproveSoftwareEntriesPrompt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BackgroundAndForegroundColorDialog.resx">
+      <DependentUpon>BackgroundAndForegroundColorDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ConnestionStringPrompt.resx">
       <DependentUpon>ConnestionStringPrompt.cs</DependentUpon>

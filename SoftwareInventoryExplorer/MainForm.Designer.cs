@@ -54,8 +54,13 @@
             this.approvedSoftwareLists = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.approvedListsBox = new System.Windows.Forms.ListBox();
+            this.colorDisplayExampleLabel = new System.Windows.Forms.Label();
+            this.setColorsButton = new System.Windows.Forms.Button();
+            this.deleteListButton = new System.Windows.Forms.Button();
             this.deleteFromApprovedListButton = new System.Windows.Forms.Button();
             this.approvedSoftwareDataGrid = new System.Windows.Forms.DataGridView();
+            this.approvedSoftwareRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.deleteSelectedFromListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reports = new System.Windows.Forms.TabPage();
             this.addReportButton = new System.Windows.Forms.Button();
             this.editReportButton = new System.Windows.Forms.Button();
@@ -68,8 +73,6 @@
             this.deleteReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveProjectFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.approvedSoftwareRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.deleteSelectedFromListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.programTabControl.SuspendLayout();
             this.sccmViewTab.SuspendLayout();
@@ -81,10 +84,10 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.approvedSoftwareDataGrid)).BeginInit();
+            this.approvedSoftwareRightClickMenu.SuspendLayout();
             this.reports.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.reportsDataGridView)).BeginInit();
             this.reportRightClickMenu.SuspendLayout();
-            this.approvedSoftwareRightClickMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -311,6 +314,9 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.colorDisplayExampleLabel);
+            this.splitContainer1.Panel2.Controls.Add(this.setColorsButton);
+            this.splitContainer1.Panel2.Controls.Add(this.deleteListButton);
             this.splitContainer1.Panel2.Controls.Add(this.deleteFromApprovedListButton);
             this.splitContainer1.Panel2.Controls.Add(this.approvedSoftwareDataGrid);
             this.splitContainer1.Size = new System.Drawing.Size(768, 343);
@@ -328,6 +334,38 @@
             this.approvedListsBox.Size = new System.Drawing.Size(138, 342);
             this.approvedListsBox.TabIndex = 1;
             this.approvedListsBox.SelectedValueChanged += new System.EventHandler(this.approvedListsBox_SelectedValueChanged);
+            // 
+            // colorDisplayExampleLabel
+            // 
+            this.colorDisplayExampleLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.colorDisplayExampleLabel.AutoSize = true;
+            this.colorDisplayExampleLabel.BackColor = System.Drawing.Color.Transparent;
+            this.colorDisplayExampleLabel.Location = new System.Drawing.Point(179, 322);
+            this.colorDisplayExampleLabel.Name = "colorDisplayExampleLabel";
+            this.colorDisplayExampleLabel.Size = new System.Drawing.Size(111, 13);
+            this.colorDisplayExampleLabel.TabIndex = 6;
+            this.colorDisplayExampleLabel.Text = "Color Display Example";
+            // 
+            // setColorsButton
+            // 
+            this.setColorsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.setColorsButton.Location = new System.Drawing.Point(86, 317);
+            this.setColorsButton.Name = "setColorsButton";
+            this.setColorsButton.Size = new System.Drawing.Size(75, 23);
+            this.setColorsButton.TabIndex = 5;
+            this.setColorsButton.Text = "Set Colors";
+            this.setColorsButton.UseVisualStyleBackColor = true;
+            this.setColorsButton.Click += new System.EventHandler(this.setColorsButton_Click);
+            // 
+            // deleteListButton
+            // 
+            this.deleteListButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.deleteListButton.Location = new System.Drawing.Point(4, 316);
+            this.deleteListButton.Name = "deleteListButton";
+            this.deleteListButton.Size = new System.Drawing.Size(75, 23);
+            this.deleteListButton.TabIndex = 4;
+            this.deleteListButton.Text = "Delete List";
+            this.deleteListButton.UseVisualStyleBackColor = true;
             // 
             // deleteFromApprovedListButton
             // 
@@ -358,6 +396,21 @@
             this.approvedSoftwareDataGrid.Size = new System.Drawing.Size(621, 308);
             this.approvedSoftwareDataGrid.TabIndex = 2;
             this.approvedSoftwareDataGrid.SelectionChanged += new System.EventHandler(this.approvedSoftwareDataGrid_SelectionChanged);
+            // 
+            // approvedSoftwareRightClickMenu
+            // 
+            this.approvedSoftwareRightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteSelectedFromListToolStripMenuItem});
+            this.approvedSoftwareRightClickMenu.Name = "approvedSoftwareRightClickMenu";
+            this.approvedSoftwareRightClickMenu.ShowImageMargin = false;
+            this.approvedSoftwareRightClickMenu.Size = new System.Drawing.Size(180, 26);
+            // 
+            // deleteSelectedFromListToolStripMenuItem
+            // 
+            this.deleteSelectedFromListToolStripMenuItem.Name = "deleteSelectedFromListToolStripMenuItem";
+            this.deleteSelectedFromListToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.deleteSelectedFromListToolStripMenuItem.Text = "Delete Selected from List";
+            this.deleteSelectedFromListToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedFromListToolStripMenuItem_Click);
             // 
             // reports
             // 
@@ -483,21 +536,6 @@
             this.saveProjectFileDialog.FileName = "NewProject.sieproj";
             this.saveProjectFileDialog.Filter = "Software Inventory Explorer Files|*.sieproj|All files|*.*";
             // 
-            // approvedSoftwareRightClickMenu
-            // 
-            this.approvedSoftwareRightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deleteSelectedFromListToolStripMenuItem});
-            this.approvedSoftwareRightClickMenu.Name = "approvedSoftwareRightClickMenu";
-            this.approvedSoftwareRightClickMenu.ShowImageMargin = false;
-            this.approvedSoftwareRightClickMenu.Size = new System.Drawing.Size(180, 26);
-            // 
-            // deleteSelectedFromListToolStripMenuItem
-            // 
-            this.deleteSelectedFromListToolStripMenuItem.Name = "deleteSelectedFromListToolStripMenuItem";
-            this.deleteSelectedFromListToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.deleteSelectedFromListToolStripMenuItem.Text = "Delete Selected from List";
-            this.deleteSelectedFromListToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedFromListToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -519,13 +557,14 @@
             this.approvedSoftwareLists.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.approvedSoftwareDataGrid)).EndInit();
+            this.approvedSoftwareRightClickMenu.ResumeLayout(false);
             this.reports.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.reportsDataGridView)).EndInit();
             this.reportRightClickMenu.ResumeLayout(false);
-            this.approvedSoftwareRightClickMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -573,6 +612,9 @@
         private System.Windows.Forms.ToolStripMenuItem deleteReportToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip approvedSoftwareRightClickMenu;
         private System.Windows.Forms.ToolStripMenuItem deleteSelectedFromListToolStripMenuItem;
+        private System.Windows.Forms.Button setColorsButton;
+        private System.Windows.Forms.Button deleteListButton;
+        private System.Windows.Forms.Label colorDisplayExampleLabel;
     }
 }
 

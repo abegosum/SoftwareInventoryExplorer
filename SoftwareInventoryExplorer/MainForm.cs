@@ -136,7 +136,7 @@ namespace SoftwareInventoryExplorer
             {
                 if (tableEntries[i].IsHighlighted)
                 {
-                    highlightSccmRow(sccmDataTable.Rows[i]);
+                    highlightSccmRow(sccmDataTable.Rows[i], tableEntries[i].ForegroundColor, tableEntries[i].BackgroundColor);
                 }
                 else
                 {
@@ -182,14 +182,27 @@ namespace SoftwareInventoryExplorer
             approvedSoftwareDataGrid.CurrentCell = null;
         }
 
-        private void highlightSccmRow(DataGridViewRow row)
+        private void highlightSccmRow(DataGridViewRow row, Nullable<int> foregroundColorArgb, Nullable<int> backgroundColorArgb)
         {
-            row.DefaultCellStyle.BackColor = Color.LightGreen;
+
+            Color foregroundColor = SystemColors.ControlText;
+            Color backgroundColor = Color.LightGreen;
+            if (foregroundColorArgb != null)
+            {
+                foregroundColor = Color.FromArgb(foregroundColorArgb.Value);
+            }
+            if (backgroundColorArgb != null)
+            {
+                backgroundColor = Color.FromArgb(backgroundColorArgb.Value);
+            }
+            row.DefaultCellStyle.ForeColor = foregroundColor;
+            row.DefaultCellStyle.BackColor = backgroundColor;
         }
 
         private void unhighlightSccmRow(DataGridViewRow row)
         {
             row.DefaultCellStyle.BackColor = Color.White;
+            row.DefaultCellStyle.ForeColor = SystemColors.ControlText;
         }
 
         private List<SoftwareInventoryTableEntry> getDataFromSccm()
@@ -216,7 +229,7 @@ namespace SoftwareInventoryExplorer
                 int currentIndex = row.Index;
                 list.addSoftware(approvedBy, OpenProject.SccmTableEntries[currentIndex].Software);
                 OpenProject.SccmTableEntries[currentIndex].IsHighlighted = true;
-                highlightSccmRow(row);
+                highlightSccmRow(row, list.ForegroundColor, list.BackgroundColor);
             }
         }
 
@@ -276,13 +289,18 @@ namespace SoftwareInventoryExplorer
             Text = titleBuilder.ToString();
         }
 
+        private void loadSccmEntriesFromProject()
+        {
+            loadSccmDataFromTableEntryList(OpenProject.SccmTableEntries);
+            if (OpenProject.SccmSoftwareScrollPosition != null) sccmDataTable.FirstDisplayedScrollingRowIndex = OpenProject.SccmSoftwareScrollPosition.Value;
+        }
+
         private void setupUiFromProject()
         {
             if (OpenProject.SccmTableEntries != null && OpenProject.SccmTableEntries.Count > 0)
             {
                 displayTabPage("sccmViewTab", false);
-                loadSccmDataFromTableEntryList(OpenProject.SccmTableEntries);
-                if (OpenProject.SccmSoftwareScrollPosition != null) sccmDataTable.FirstDisplayedScrollingRowIndex = OpenProject.SccmSoftwareScrollPosition.Value;
+                loadSccmEntriesFromProject();
                 programTabControl.SelectTab(TabPages["sccmViewTab"]);
             }
             databindApprovedSoftwareLists();
@@ -577,6 +595,8 @@ namespace SoftwareInventoryExplorer
                 foreach (SoftwareInventoryTableEntry entry in matchingEntries)
                 {
                     entry.IsHighlighted = true;
+                    entry.ForegroundColor = list.ForegroundColor;
+                    entry.BackgroundColor = list.BackgroundColor;
                     highlightedEntries.Add(entry);
                 }
             }
@@ -648,6 +668,23 @@ namespace SoftwareInventoryExplorer
                 loadApprovedSoftwareTableFromList(selectedApprovedSoftwareList.ApprovedSoftwares);
             }
         }
+
+        private void updateColorDisplaySample()
+        {
+            ApprovedSoftwareList list = getSelectedApprovedSoftwareList();
+            Color foregroundColor = SystemColors.ControlText;
+            Color backgroundColor = Color.Transparent;
+            if (list.ForegroundColor != null)
+            {
+                foregroundColor = Color.FromArgb(list.ForegroundColor.Value);
+            }
+            if (list.BackgroundColor != null)
+            {
+                backgroundColor = Color.FromArgb(list.BackgroundColor.Value);
+            }
+            colorDisplayExampleLabel.ForeColor = foregroundColor;
+            colorDisplayExampleLabel.BackColor = backgroundColor;
+        }
         #endregion
 
         #region SCCM Data Tab Events
@@ -672,6 +709,7 @@ namespace SoftwareInventoryExplorer
             if (approvedSoftwareList != null)
             {
                 loadApprovedSoftwareTableFromList(approvedSoftwareList.ApprovedSoftwares);
+                updateColorDisplaySample();
             }
         }
 
@@ -755,5 +793,22 @@ namespace SoftwareInventoryExplorer
                 }
             }
         }
+
+        private void setColorsButton_Click(object sender, EventArgs e)
+        {
+            ApprovedSoftwareList selectedList = getSelectedApprovedSoftwareList();
+            BackgroundAndForegroundColorDialog colorDialog = new BackgroundAndForegroundColorDialog(selectedList.ForegroundColor, selectedList.BackgroundColor);
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                selectedList.ForegroundColor = colorDialog.ForegroundColor;
+                selectedList.BackgroundColor = colorDialog.BackgroundColor;
+                updateColorDisplaySample();
+                highlightSoftwareEntries(OpenProject.SccmTableEntries);
+                loadSccmEntriesFromProject();
+                _edited = true;
+                setPageTitleWithProject();
+            }
+        }
+
     }
 }

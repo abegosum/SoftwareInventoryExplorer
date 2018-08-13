@@ -25,6 +25,8 @@ namespace SoftwareInventoryExplorer.data
                 _created = value;
             }
         }
+        public Nullable<int> BackgroundColor { get; set; }
+        public Nullable<int> ForegroundColor { get; set; }
 
         public ApprovedSoftwareList() { }
 

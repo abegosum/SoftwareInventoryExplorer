@@ -11,5 +11,7 @@ namespace SoftwareInventoryExplorer.data
         public int Count { get; set; }
         public Software Software { get; set; }
         public bool IsHighlighted { get; set; }
+        public Nullable<int> BackgroundColor { get; set; }
+        public Nullable<int> ForegroundColor { get; set; }
     }
 }
