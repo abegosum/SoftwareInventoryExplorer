@@ -363,9 +363,14 @@ namespace SoftwareInventoryExplorer
             {
                 listName = namePrompt.ApprovedSoftwareListName;
                 _edited = true;
-                OpenProject.ApprovedSoftwareLists.Add(new ApprovedSoftwareList(listName));
+                ApprovedSoftwareList newList = new ApprovedSoftwareList(listName);
+                OpenProject.ApprovedSoftwareLists.Add(newList);
                 databindApprovedSoftwareLists();
-                if (showSoftwareListAfterCreation) displayTabPage("approvedSoftwareLists");
+                if (showSoftwareListAfterCreation)
+                {
+                    displayTabPage("approvedSoftwareLists");
+                    approvedListsBox.SelectedItem = newList;
+                }
             }
             return listName;
         }
@@ -388,6 +393,8 @@ namespace SoftwareInventoryExplorer
         #region Project Saving and Opening
         private void openProject()
         {
+            flushAllDataSources();
+            gatherTabPagesAndHide();
             if (openProjectFileDialog.ShowDialog() == DialogResult.OK)
             {
                 String filePath = openProjectFileDialog.FileName;
@@ -429,6 +436,35 @@ namespace SoftwareInventoryExplorer
             _edited = false;
             _projectPath = filePath;
             setPageTitleWithProject();
+        }
+
+        private void flushAllDataSources()
+        {
+            approvedSoftwareDataGrid.DataSource = null;
+            reportsDataGridView.DataSource = null;
+            approvedListsBox.DataSource = null;
+            sccmDataTable.DataSource = null;
+        }
+
+        private void newProject()
+        {
+            bool cancelled = false;
+            if (_edited)
+            {
+                SaveBeforeClosePrompt prompt = new SaveBeforeClosePrompt();
+                if (prompt.ShowDialog() == DialogResult.Cancel)
+                {
+                    cancelled = true;
+                }
+            }
+            if (!cancelled)
+            {
+                flushAllDataSources();
+                _projectPath = null;
+                _openProject = new InventoryProject();
+                gatherTabPagesAndHide();
+                _edited = false;
+            }
         }
         #endregion
 
@@ -673,7 +709,7 @@ namespace SoftwareInventoryExplorer
         {
             ApprovedSoftwareList list = getSelectedApprovedSoftwareList();
             Color foregroundColor = SystemColors.ControlText;
-            Color backgroundColor = Color.Transparent;
+            Color backgroundColor = Color.LightGreen;
             if (list.ForegroundColor != null)
             {
                 foregroundColor = Color.FromArgb(list.ForegroundColor.Value);
@@ -810,5 +846,9 @@ namespace SoftwareInventoryExplorer
             }
         }
 
+        private void newInventoryProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            newProject();
+        }
     }
 }
