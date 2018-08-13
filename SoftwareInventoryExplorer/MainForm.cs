@@ -216,9 +216,8 @@ namespace SoftwareInventoryExplorer
         private void databindApprovedSoftwareLists()
         {
             approvedListsBox.DataSource = null;
-            approvedListsBox.DisplayMember = "Name";
             approvedListsBox.DataSource = OpenProject.ApprovedSoftwareLists;
-
+            approvedListsBox.DisplayMember = "Name";
         }
 
         private void approveSelectedSoftware(ApprovedSoftwareList list, ApprovedSoftware.ApprovedByCodes approvedBy)
@@ -532,6 +531,11 @@ namespace SoftwareInventoryExplorer
             About aboutForm = new About();
             aboutForm.ShowDialog();
         }
+
+        private void newInventoryProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            newProject();
+        }
         #endregion
 
         #region Context Menu Event Handlers
@@ -760,6 +764,30 @@ namespace SoftwareInventoryExplorer
             deleteSelectedApprovedEntries();
         }
 
+        private void setColorsButton_Click(object sender, EventArgs e)
+        {
+            ApprovedSoftwareList selectedList = getSelectedApprovedSoftwareList();
+            BackgroundAndForegroundColorDialog colorDialog = new BackgroundAndForegroundColorDialog(selectedList.ForegroundColor, selectedList.BackgroundColor);
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                selectedList.ForegroundColor = colorDialog.ForegroundColor;
+                selectedList.BackgroundColor = colorDialog.BackgroundColor;
+                updateColorDisplaySample();
+                highlightSoftwareEntries(OpenProject.SccmTableEntries);
+                loadSccmEntriesFromProject();
+                _edited = true;
+                setPageTitleWithProject();
+            }
+        }
+
+        private void deleteListButton_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Delete Approved List?", "Are you certain you want to delete this approved software list?", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                OpenProject.ApprovedSoftwareLists.Remove(getSelectedApprovedSoftwareList());
+                databindApprovedSoftwareLists();
+            }
+        }
         #endregion
 
         #region Main Form Event Handlers
@@ -770,6 +798,23 @@ namespace SoftwareInventoryExplorer
             {
                 OpenProject.OpenTabKey = programTabControl.SelectedTab.Name;
             } 
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_edited)
+            {
+                SaveBeforeClosePrompt prompt = new SaveBeforeClosePrompt();
+                DialogResult result = prompt.ShowDialog();
+                if (result == DialogResult.Yes)
+                {
+                    saveProject();
+                }
+                if (result == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
         #endregion
 
@@ -813,42 +858,5 @@ namespace SoftwareInventoryExplorer
         }
         #endregion
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (_edited)
-            {
-                SaveBeforeClosePrompt prompt = new SaveBeforeClosePrompt();
-                DialogResult result = prompt.ShowDialog();
-                if (result == DialogResult.Yes)
-                {
-                    saveProject();
-                }
-                if (result == DialogResult.Cancel)
-                {
-                    e.Cancel = true;
-                }
-            }
-        }
-
-        private void setColorsButton_Click(object sender, EventArgs e)
-        {
-            ApprovedSoftwareList selectedList = getSelectedApprovedSoftwareList();
-            BackgroundAndForegroundColorDialog colorDialog = new BackgroundAndForegroundColorDialog(selectedList.ForegroundColor, selectedList.BackgroundColor);
-            if (colorDialog.ShowDialog() == DialogResult.OK)
-            {
-                selectedList.ForegroundColor = colorDialog.ForegroundColor;
-                selectedList.BackgroundColor = colorDialog.BackgroundColor;
-                updateColorDisplaySample();
-                highlightSoftwareEntries(OpenProject.SccmTableEntries);
-                loadSccmEntriesFromProject();
-                _edited = true;
-                setPageTitleWithProject();
-            }
-        }
-
-        private void newInventoryProjectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            newProject();
-        }
     }
 }

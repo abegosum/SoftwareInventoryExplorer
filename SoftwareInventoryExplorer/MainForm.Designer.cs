@@ -333,7 +333,7 @@
             this.approvedListsBox.FormattingEnabled = true;
             this.approvedListsBox.Location = new System.Drawing.Point(0, 0);
             this.approvedListsBox.Name = "approvedListsBox";
-            this.approvedListsBox.Size = new System.Drawing.Size(138, 342);
+            this.approvedListsBox.Size = new System.Drawing.Size(134, 329);
             this.approvedListsBox.TabIndex = 1;
             this.approvedListsBox.SelectedValueChanged += new System.EventHandler(this.approvedListsBox_SelectedValueChanged);
             // 
@@ -368,6 +368,7 @@
             this.deleteListButton.TabIndex = 4;
             this.deleteListButton.Text = "Delete List";
             this.deleteListButton.UseVisualStyleBackColor = true;
+            this.deleteListButton.Click += new System.EventHandler(this.deleteListButton_Click);
             // 
             // deleteFromApprovedListButton
             // 
