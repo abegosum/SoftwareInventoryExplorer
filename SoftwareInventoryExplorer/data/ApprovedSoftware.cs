@@ -13,7 +13,8 @@ namespace SoftwareInventoryExplorer.data
         {
             ALL = 0,
             FULL_VERSION = 1,
-            MAJOR_VESION = 2
+            MAJOR_VERSION = 2,
+            MAJOR_VERSION_OR_GREATER = 3,
         }
 
         public ApprovedByCodes ApprovedBy { get; set; }
@@ -31,9 +32,13 @@ namespace SoftwareInventoryExplorer.data
                     result = SoftwareExample.SoftwareCode.Equals(software.SoftwareCode) && 
                         SoftwareExample.ProductVersionString.Equals(software.ProductVersionString);
                     break;
-                case ApprovedByCodes.MAJOR_VESION:
+                case ApprovedByCodes.MAJOR_VERSION:
                     result = SoftwareExample.SoftwareCode.Equals(software.SoftwareCode) &&
                         SoftwareExample.MajorVersion == software.MajorVersion;
+                    break;
+                case ApprovedByCodes.MAJOR_VERSION_OR_GREATER:
+                    result = SoftwareExample.SoftwareCode.Equals(software.SoftwareCode) &&
+                        software.MajorVersion >= SoftwareExample.MajorVersion;
                     break;
 
             }
@@ -55,9 +60,13 @@ namespace SoftwareInventoryExplorer.data
                             result = result &&
                                 testingSoftware.SoftwareExample.ProductVersionString.Equals(SoftwareExample.ProductVersionString);
                             break;
-                        case ApprovedByCodes.MAJOR_VESION:
+                        case ApprovedByCodes.MAJOR_VERSION:
                             result = result &&
                                 testingSoftware.SoftwareExample.MajorVersion == SoftwareExample.MajorVersion;
+                            break;
+                        case ApprovedByCodes.MAJOR_VERSION_OR_GREATER:
+                            result = result &&
+                                testingSoftware.SoftwareExample.MajorVersion >= SoftwareExample.MajorVersion;
                             break;
                     }
                 }

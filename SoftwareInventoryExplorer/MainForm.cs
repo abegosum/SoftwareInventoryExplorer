@@ -159,7 +159,8 @@ namespace SoftwareInventoryExplorer
                 row["Software Code"] = item.SoftwareExample.SoftwareCode;
                 switch (item.ApprovedBy)
                 {
-                    case ApprovedSoftware.ApprovedByCodes.MAJOR_VESION:
+                    case ApprovedSoftware.ApprovedByCodes.MAJOR_VERSION:
+                    case ApprovedSoftware.ApprovedByCodes.MAJOR_VERSION_OR_GREATER:
                         row["Version"] = null;
                         row["Major Version"] = item.SoftwareExample.MajorVersion;
                         row["Minor Version"] = null;
@@ -266,6 +267,14 @@ namespace SoftwareInventoryExplorer
             {
                 relevantEntries = relevantEntries.Except(hightlightSoftwareEntiresForList(relevantEntries, list)).ToList();
             }
+        }
+
+        private void refreshHighlights()
+        {
+            int tableScrollPosition = sccmDataTable.FirstDisplayedScrollingRowIndex;
+            highlightSoftwareEntries(OpenProject.SccmTableEntries);
+            loadSccmDataFromTableEntryList(OpenProject.SccmTableEntries);
+            sccmDataTable.FirstDisplayedScrollingRowIndex = tableScrollPosition;
         }
         #endregion
 
@@ -662,6 +671,7 @@ namespace SoftwareInventoryExplorer
                         approveSelectedSoftware(dialogPrompt.SelectedList, dialogPrompt.ApprovalCode);
                         approvedListsBox.SelectedItem = dialogPrompt.SelectedList;
                         loadApprovedSoftwareTableFromList(dialogPrompt.SelectedList.ApprovedSoftwares);
+                        refreshHighlights();
                         displayTabPage("approvedSoftwareLists");
                     }
                 }

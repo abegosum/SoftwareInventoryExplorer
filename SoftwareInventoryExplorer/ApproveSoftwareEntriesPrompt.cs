@@ -86,7 +86,8 @@ namespace SoftwareInventoryExplorer
             List<KeyValuePair<String, ApprovedSoftware.ApprovedByCodes>> options = new List<KeyValuePair<string, ApprovedSoftware.ApprovedByCodes>>();
             options.Add(new KeyValuePair<string, ApprovedSoftware.ApprovedByCodes>("Approve all Versions", ApprovedSoftware.ApprovedByCodes.ALL));
             options.Add(new KeyValuePair<string, ApprovedSoftware.ApprovedByCodes>("Approve this specific version", ApprovedSoftware.ApprovedByCodes.FULL_VERSION));
-            options.Add(new KeyValuePair<string, ApprovedSoftware.ApprovedByCodes>("Approve this major version", ApprovedSoftware.ApprovedByCodes.MAJOR_VESION));
+            options.Add(new KeyValuePair<string, ApprovedSoftware.ApprovedByCodes>("Approve this major version", ApprovedSoftware.ApprovedByCodes.MAJOR_VERSION));
+            options.Add(new KeyValuePair<string, ApprovedSoftware.ApprovedByCodes>("Approve this major version or greater", ApprovedSoftware.ApprovedByCodes.MAJOR_VERSION_OR_GREATER));
             approvalTypeDropDown.DisplayMember = "Key";
             approvalTypeDropDown.DataSource = options;
         }
