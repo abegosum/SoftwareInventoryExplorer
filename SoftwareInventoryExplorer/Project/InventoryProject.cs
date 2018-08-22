@@ -27,7 +27,21 @@ namespace SoftwareInventoryExplorer.Project
             }
         }
 
-        public List<SoftwareInventoryTableEntry> SccmTableEntries { get; set; }
+        private List<SoftwareInventoryTableEntry> _sccmTableEntries;
+        public List<SoftwareInventoryTableEntry> SccmTableEntries {
+            get
+            {
+                if (_sccmTableEntries == null)
+                {
+                    _sccmTableEntries = new List<SoftwareInventoryTableEntry>();
+                }
+                return _sccmTableEntries;
+            }
+            set
+            {
+                _sccmTableEntries = value;
+            }
+        }
 
         public String OpenTabKey { get; set; }
 
